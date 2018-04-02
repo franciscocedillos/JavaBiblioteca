@@ -5,10 +5,6 @@
  */
 package sv.edu.udb.catedra;
 
-/**
- *
- * @author luigi
- */
 public class Contenedor extends javax.swing.JFrame {
 
     /**
