@@ -5,6 +5,8 @@
  */
 package sv.edu.udb.catedra;
 
+import sv.edu.udb.catedra.encargados.Editorial;
+
 public class Contenedor extends javax.swing.JFrame {
 
     /**
@@ -12,6 +14,7 @@ public class Contenedor extends javax.swing.JFrame {
      */
     public Contenedor() {
         initComponents();
+        setExtendedState(Contenedor.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
     }
 
@@ -52,6 +55,7 @@ public class Contenedor extends javax.swing.JFrame {
         aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Sibyl Biblioteca");
 
         consultaMenu.setMnemonic('f');
         consultaMenu.setText("Consultas");
@@ -85,6 +89,11 @@ public class Contenedor extends javax.swing.JFrame {
 
         cutMenuItem.setMnemonic('t');
         cutMenuItem.setText("Editorial");
+        cutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cutMenuItemActionPerformed(evt);
+            }
+        });
         encargadoMenu.add(cutMenuItem);
 
         copyMenuItem.setMnemonic('y');
@@ -156,13 +165,13 @@ public class Contenedor extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(desktopPane, javax.swing.GroupLayout.PREFERRED_SIZE, 725, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(desktopPane, javax.swing.GroupLayout.PREFERRED_SIZE, 768, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(desktopPane, javax.swing.GroupLayout.PREFERRED_SIZE, 475, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(desktopPane, javax.swing.GroupLayout.PREFERRED_SIZE, 517, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -172,6 +181,16 @@ public class Contenedor extends javax.swing.JFrame {
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
         System.exit(0);
     }//GEN-LAST:event_exitMenuItemActionPerformed
+
+    private void cutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cutMenuItemActionPerformed
+        // TODO add your handling code here:
+        if(Editorial.bandera ==0){
+            Editorial edt = new Editorial();
+            desktopPane.add(edt);
+            edt.show();
+            Editorial.bandera=1;
+        }
+    }//GEN-LAST:event_cutMenuItemActionPerformed
 
     /**
      * @param args the command line arguments

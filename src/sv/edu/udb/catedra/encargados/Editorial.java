@@ -4,18 +4,80 @@
  * and open the template in the editor.
  */
 package sv.edu.udb.catedra.encargados;
-
+import sv.edu.udb.catedra.*;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author luigi
  */
-public class Editorial extends javax.swing.JInternalFrame {
+public final class Editorial extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form Editorial
      */
+    
+    ResultSet resultado;
+    DefaultTableModel modelo = null;
+    public static int bandera = 0;
+    static int id;
+    Conexion con;
+    
     public Editorial() {
         initComponents();
+        Object [][] data = null;
+        String [] columns = {"ID","Nombre","Teléfono","Dirección","País"};
+        modelo = new DefaultTableModel(data,columns);
+        this.dgvDatos.setModel(modelo);
+        iniciarValores();
+    }
+    
+    public void iniciarValores(){
+        try {
+            con = new Conexion();
+            con.setRs("SELECT paiId,paiNombre FROM Pais ORDER BY paiNombre ASC");
+            con.llenarCombo(cboPais);
+            generarListado();
+            btnNuevo.setEnabled(true);
+            btnModificar.setEnabled(false);
+            btnEliminar.setEnabled(false);
+            btnCancelar.setEnabled(false);
+            btnLimpiar.setEnabled(false);
+            con.cerrarConexion();
+        } catch (SQLException ex) {
+            Logger.getLogger(Editorial.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+        }
+    }
+    
+    public void generarListado(){
+        while (modelo.getRowCount()!=0) {
+            modelo.removeRow(0);
+        }
+        try {
+            con.setRs("SELECT e.edtId,e.edtNombre,e.edtTelefono,e.edtDireccion,p.paiNombre FROM Editorial e\n" +
+                "INNER JOIN Pais p ON e.paiId = p.paiId;");
+            resultado = (ResultSet) con.getRs();
+            while (resultado.next()) {
+                Object [] newRow={resultado.getInt(1),resultado.getString(2),resultado.getString(3),resultado.getString(4),resultado.getString(5)};
+                modelo.addRow(newRow);
+            }
+            resultado.close();
+        } catch (SQLException | NullPointerException ex) {
+            Logger.getLogger(Editorial.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+        }
+    }
+    
+    private Boolean validar(){
+        return !(txtNombre.getText().isEmpty());
+    }
+    
+    private void limpiar(){
+        txtNombre.setText("");txtTelefono.setText("");txtDireccion.setText("");cboPais.setSelectedIndex(0);
     }
 
     /**
@@ -33,7 +95,7 @@ public class Editorial extends javax.swing.JInternalFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        txtNombre = new javax.swing.JTextPane();
+        txtNombre = new javax.swing.JTextField();
         txtTelefono = new javax.swing.JTextField();
         txtDireccion = new javax.swing.JTextField();
         cboPais = new javax.swing.JComboBox<>();
@@ -45,7 +107,7 @@ public class Editorial extends javax.swing.JInternalFrame {
         btnLimpiar = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        dgvDatos = new javax.swing.JTable();
 
         setClosable(true);
         setTitle("Editorial");
@@ -63,14 +125,39 @@ public class Editorial extends javax.swing.JInternalFrame {
         cboPais.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btnNuevo.setText("Nuevo");
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
 
         btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         btnLimpiar.setText("Limpiar");
+        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -153,7 +240,7 @@ public class Editorial extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        dgvDatos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -164,7 +251,12 @@ public class Editorial extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane4.setViewportView(jTable1);
+        dgvDatos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                dgvDatosMouseClicked(evt);
+            }
+        });
+        jScrollPane4.setViewportView(dgvDatos);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -196,6 +288,103 @@ public class Editorial extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        // TODO add your handling code here:
+        try {
+            if (btnNuevo.getText().equals("Nuevo")) {
+                btnModificar.setEnabled(false);
+                btnEliminar.setEnabled(false);
+                btnCancelar.setEnabled(true);
+                btnLimpiar.setEnabled(true);
+                btnNuevo.setText("Agregar");
+                limpiar();
+            } else {
+                if(validar()){
+                    Conexion con2 = new Conexion();
+                    con.setQuery("INSERT INTO Editorial VALUES(null,'"+txtNombre.getText()+"','"+txtTelefono.getText()+"','"+txtDireccion.getText()+"',"+con.getValue(cboPais)+")");
+                    JOptionPane.showMessageDialog(null, "Editorial ingresada exitosamente", "Transacción", JOptionPane.INFORMATION_MESSAGE, null);
+                    con2.cerrarConexion();
+                    iniciarValores();
+                }else
+                    JOptionPane.showMessageDialog(null, "ERROR: Debe ingresar los datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE, null);
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+        }
+        
+        
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        // TODO add your handling code here:
+        try {
+            if (btnModificar.getText().equals("Modificar")) {
+                btnNuevo.setEnabled(false);
+                btnEliminar.setEnabled(false);
+                btnCancelar.setEnabled(true);
+                btnLimpiar.setEnabled(true);
+                btnModificar.setText("Actualizar");
+            } else {
+                if (validar()) {
+                    if(JOptionPane.showConfirmDialog(null, "¿Desea modificar la editorial " + txtNombre.getText() + "?","Confirmación",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                        Conexion con2 = new Conexion();
+                        con2.setQuery("UPDATE Editorial SET edtNombre='" + txtNombre.getText().trim() + "',edtTelefono='" + txtTelefono.getText().trim() + 
+                                "',edtDireccion = '" + txtDireccion.getText().trim() + "', paiId = " + con2.getValue(cboPais) + " WHERE edtId = " + id);
+                        con2.cerrarConexion();
+                        JOptionPane.showMessageDialog(this, "Editorial modificada exitosamente");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Debe ingresar los campos requeridos");
+                }
+                btnModificar.setText("Modificar");
+                iniciarValores();
+                limpiar();
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+        }
+    }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // TODO add your handling code here:
+        try {
+            if(JOptionPane.showConfirmDialog(null, "¿Desea eliminar la editorial " + txtNombre.getText() + "?","Confirmación",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                Conexion con2 = new Conexion();    
+                con2.setQuery("DELETE FROM Editorial WHERE edtId = " + id);
+                con2.cerrarConexion();
+                JOptionPane.showMessageDialog(this, "Editorial eliminada exitosamente");
+                limpiar();
+                iniciarValores();
+            }
+        } catch (SQLException ex){
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        // TODO add your handling code here:
+        limpiar();iniciarValores();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+        // TODO add your handling code here:
+        limpiar();
+    }//GEN-LAST:event_btnLimpiarActionPerformed
+
+    private void dgvDatosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dgvDatosMouseClicked
+        // TODO add your handling code here:
+        int fila = dgvDatos.rowAtPoint(evt.getPoint());
+        if ((fila > -1)) {
+            btnModificar.setEnabled(true);
+            btnEliminar.setEnabled(true);
+            id = Integer.parseInt(modelo.getValueAt(fila, 0).toString());
+            txtNombre.setText(modelo.getValueAt(fila, 1).toString());
+            txtTelefono.setText(modelo.getValueAt(fila, 2).toString());
+            txtDireccion.setText(modelo.getValueAt(fila, 3).toString());
+            cboPais.setSelectedItem(modelo.getValueAt(fila, 4).toString());
+        } else limpiar();
+    }//GEN-LAST:event_dgvDatosMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
@@ -204,6 +393,7 @@ public class Editorial extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnNuevo;
     private javax.swing.JComboBox<String> cboPais;
+    private javax.swing.JTable dgvDatos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -213,9 +403,8 @@ public class Editorial extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField txtDireccion;
-    private javax.swing.JTextPane txtNombre;
+    private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
 }

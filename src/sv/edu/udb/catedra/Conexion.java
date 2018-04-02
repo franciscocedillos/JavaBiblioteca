@@ -6,6 +6,7 @@
 package sv.edu.udb.catedra;
 import java.sql.*;
 import java.util.*;
+import javax.swing.JComboBox;
 
 /**
  *
@@ -26,7 +27,7 @@ public class Conexion {
             Class.forName("com.mysql.jdbc.Driver");
             // Se obtiene una conexión con la base de datos. 2
             conexion = DriverManager.getConnection (
-            "jdbc:mysql://localhost/Guia9","root", "admin123*");
+            "jdbc:mysql://localhost/sibylBiblioteca","root", "admin123*");
             // Permite ejecutar sentencias SQL sin parámetros
             s = conexion.createStatement();
         }
@@ -73,4 +74,40 @@ public class Conexion {
         }
         
     }
+    
+    public void llenarCombo(JComboBox comboBox) throws SQLException{
+        try {
+            comboBox.removeAllItems();
+            rs = getRs();
+            while (rs.next()) {
+                comboBox.addItem(new ItemComboBox(rs.getInt(1), rs.getString(2)));
+            }
+        } catch (SQLException ex) {
+        }
+    }
+    
+    public int getValue(JComboBox comboBox){
+        Object item = comboBox.getSelectedItem();
+        int value = ((ItemComboBox)item).getId();
+        return value;
+    }
+    
+    class ItemComboBox
+    {
+        private final int id;
+        private final String descripcion;
+ 
+        public ItemComboBox(int id, String descripcion)
+        {
+            this.id = id;
+            this.descripcion = descripcion;
+        }
+ 
+        public int getId(){ return id; }
+ 
+        public String getDescripcion(){ return descripcion; }
+ 
+        public String toString(){ return descripcion; }
+    }
+    
 }
