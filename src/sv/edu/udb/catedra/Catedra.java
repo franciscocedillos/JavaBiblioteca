@@ -5,7 +5,6 @@
  */
 package sv.edu.udb.catedra;
 
-
 public class Catedra {
 
     /**
