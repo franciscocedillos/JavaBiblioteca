@@ -301,7 +301,7 @@ public final class Editorial extends javax.swing.JInternalFrame {
             } else {
                 if(validar()){
                     Conexion con2 = new Conexion();
-                    con.setQuery("INSERT INTO Editorial VALUES(null,'"+txtNombre.getText()+"','"+txtTelefono.getText()+"','"+txtDireccion.getText()+"',"+con.getValue(cboPais)+")");
+                    con2.setQuery("INSERT INTO Editorial VALUES(null,'"+txtNombre.getText()+"','"+txtTelefono.getText()+"','"+txtDireccion.getText()+"',"+con.getValue(cboPais)+")");
                     JOptionPane.showMessageDialog(null, "Editorial ingresada exitosamente", "Transacción", JOptionPane.INFORMATION_MESSAGE, null);
                     con2.cerrarConexion();
                     iniciarValores();

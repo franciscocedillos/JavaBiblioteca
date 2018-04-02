@@ -6,6 +6,7 @@
 package sv.edu.udb.catedra;
 
 import sv.edu.udb.catedra.encargados.Editorial;
+import sv.edu.udb.catedra.encargados.MaeAutor;
 
 public class Contenedor extends javax.swing.JFrame {
 
@@ -35,7 +36,7 @@ public class Contenedor extends javax.swing.JFrame {
         saveAsMenuItem = new javax.swing.JMenuItem();
         exitMenuItem = new javax.swing.JMenuItem();
         encargadoMenu = new javax.swing.JMenu();
-        cutMenuItem = new javax.swing.JMenuItem();
+        mitMaeAutor = new javax.swing.JMenuItem();
         copyMenuItem = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -56,6 +57,8 @@ public class Contenedor extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Sibyl Biblioteca");
+
+        desktopPane.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         consultaMenu.setMnemonic('f');
         consultaMenu.setText("Consultas");
@@ -87,17 +90,22 @@ public class Contenedor extends javax.swing.JFrame {
         encargadoMenu.setMnemonic('e');
         encargadoMenu.setText("Encargados");
 
-        cutMenuItem.setMnemonic('t');
-        cutMenuItem.setText("Editorial");
-        cutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        mitMaeAutor.setMnemonic('t');
+        mitMaeAutor.setText("Editorial");
+        mitMaeAutor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cutMenuItemActionPerformed(evt);
+                mitMaeAutorActionPerformed(evt);
             }
         });
-        encargadoMenu.add(cutMenuItem);
+        encargadoMenu.add(mitMaeAutor);
 
         copyMenuItem.setMnemonic('y');
         copyMenuItem.setText("Autor");
+        copyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyMenuItemActionPerformed(evt);
+            }
+        });
         encargadoMenu.add(copyMenuItem);
 
         jMenu1.setText("Productos");
@@ -165,13 +173,13 @@ public class Contenedor extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(desktopPane, javax.swing.GroupLayout.PREFERRED_SIZE, 768, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(desktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1024, Short.MAX_VALUE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(desktopPane, javax.swing.GroupLayout.PREFERRED_SIZE, 517, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(desktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 720, Short.MAX_VALUE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -182,7 +190,7 @@ public class Contenedor extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
-    private void cutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cutMenuItemActionPerformed
+    private void mitMaeAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitMaeAutorActionPerformed
         // TODO add your handling code here:
         if(Editorial.bandera ==0){
             Editorial edt = new Editorial();
@@ -190,7 +198,17 @@ public class Contenedor extends javax.swing.JFrame {
             edt.show();
             Editorial.bandera=1;
         }
-    }//GEN-LAST:event_cutMenuItemActionPerformed
+    }//GEN-LAST:event_mitMaeAutorActionPerformed
+
+    private void copyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyMenuItemActionPerformed
+        // TODO add your handling code here:
+        if(MaeAutor.bandera ==0){
+            MaeAutor aut = new MaeAutor();
+            desktopPane.add(aut);
+            aut.show();
+            Editorial.bandera=1;
+        }
+    }//GEN-LAST:event_copyMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -232,7 +250,6 @@ public class Contenedor extends javax.swing.JFrame {
     private javax.swing.JMenu consultaMenu;
     private javax.swing.JMenuItem contentMenuItem;
     private javax.swing.JMenuItem copyMenuItem;
-    private javax.swing.JMenuItem cutMenuItem;
     private javax.swing.JDesktopPane desktopPane;
     private javax.swing.JMenu encargadoMenu;
     private javax.swing.JMenuItem exitMenuItem;
@@ -250,6 +267,7 @@ public class Contenedor extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem mitMaeAutor;
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenu prestamoMenu;
     private javax.swing.JMenuItem saveAsMenuItem;
