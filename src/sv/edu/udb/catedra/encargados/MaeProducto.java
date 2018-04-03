@@ -29,9 +29,9 @@ public class MaeProducto extends javax.swing.JInternalFrame {
     public MaeProducto() {
         initComponents();
         Object [][] data = null;
-        String [] columns = {"ID","Nombre","Apellido","Fecha de Nacimineto","País"};
+        String [] columns = {"ID","Código","Título","Tipo","Categoría","País"};
         modelo = new DefaultTableModel(data,columns);
-        //this.dgvdatos.setModel(modelo);
+        this.dgvDatos.setModel(modelo);
         iniciarValores();
     }
     
@@ -50,8 +50,14 @@ public class MaeProducto extends javax.swing.JInternalFrame {
             //ComboBox Categoria
             con.setRs("SELECT langId,langNombre FROM Idioma ORDER BY langId ASC");
             con.llenarCombo(cboIdioma);
-            /*generarListado();
-            btnNuevo.setEnabled(true);
+            for (int i = 2018; i > 1950; i--) {
+                cboAnio.addItem("" + i);
+            }
+            //ListView Autores
+            con.setRs("SELECT autId,CONCAT(autNombre,' ',autApellido) AS Nombre FROM Autor ORDER BY Nombre ASC");
+            con.llenarList(lstAutorO);
+            generarListado();
+            /*btnNuevo.setEnabled(true);
             btnModificar.setEnabled(false);
             btnEliminar.setEnabled(false);
             btnCancelar.setEnabled(false);
@@ -61,6 +67,32 @@ public class MaeProducto extends javax.swing.JInternalFrame {
             Logger.getLogger(MaeProducto.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
         }
+    }
+    
+    public void generarListado(){
+        while (modelo.getRowCount()!=0) {
+            modelo.removeRow(0);
+        }
+        try {
+            Conexion con2 = new Conexion();
+            con2.setRs("SELECT SELECT p.proId,p.proIsbn,p.proNombre,t.tproNombre,c.cproNombre FROM Producto p\n" +
+                "INNER JOIN CategoriaProducto c ON p.cproId = c.cproId INNER JOIN TipoProducto t ON p.tproId = t.tproId;");
+            resultado = (ResultSet) con.getRs();
+            while (resultado.next()) {
+                Object [] newRow={resultado.getInt(1),resultado.getString(2),resultado.getString(3),resultado.getString(4),resultado.getString(5)};
+                modelo.addRow(newRow);
+            }
+            resultado.close();
+            con2.cerrarConexion();
+        } catch (SQLException | NullPointerException ex) {
+            Logger.getLogger(Editorial.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+        }
+    }
+    
+    public void limpiar(){
+        cboTipo.setSelectedIndex(0);cboCategoria.setSelectedIndex(0);cboEditorial.setSelectedIndex(0);cboIdioma.setSelectedIndex(0);
+        cboAnio.setSelectedIndex(0);
     }
 
     /**
@@ -109,15 +141,15 @@ public class MaeProducto extends javax.swing.JInternalFrame {
         jLabel15 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         lstAutorD = new javax.swing.JList<>();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnAdd = new javax.swing.JButton();
+        btnRemove = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         lstAutorO = new javax.swing.JList<>();
 
         setClosable(true);
         setTitle("Maestro de Productos");
 
-        jPanel1.setBackground(new java.awt.Color(255, 153, 153));
+        jPanel1.setBackground(new java.awt.Color(153, 204, 255));
 
         dgvDatos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -172,28 +204,21 @@ public class MaeProducto extends javax.swing.JInternalFrame {
 
         cboCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        cboAnio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         cboIdioma.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel15.setText("Autores:");
 
-        lstAutorD.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane2.setViewportView(lstAutorD);
 
-        jButton1.setText(">>");
-
-        jButton2.setText("<<");
-
-        lstAutorO.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
+        btnAdd.setText(">>");
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
         });
+
+        btnRemove.setText("<<");
+
         jScrollPane3.setViewportView(lstAutorO);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -249,15 +274,17 @@ public class MaeProducto extends javax.swing.JInternalFrame {
                                         .addComponent(jLabel10)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(spnVolumen, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(18, 18, 18)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel13)
+                                        .addGap(30, 30, 30))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                             .addComponent(jLabel12)
-                                            .addComponent(jLabel13))
-                                        .addGap(1, 1, 1))
-                                    .addComponent(jLabel11))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(jLabel11))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(cboIdioma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtColeccion, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -267,8 +294,8 @@ public class MaeProducto extends javax.swing.JInternalFrame {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(14, 14, 14)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jButton1)
-                                    .addComponent(jButton2))
+                                    .addComponent(btnAdd)
+                                    .addComponent(btnRemove))
                                 .addGap(32, 32, 32)
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(181, 181, 181))
@@ -295,12 +322,7 @@ public class MaeProducto extends javax.swing.JInternalFrame {
                                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                             .addComponent(jLabel8)
                                             .addComponent(txtLugar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jLabel11)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jLabel12)
-                                        .addGap(13, 13, 13)
-                                        .addComponent(jLabel13)))
+                                    .addComponent(jLabel13))
                                 .addGap(13, 13, 13)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel9)
@@ -315,9 +337,13 @@ public class MaeProducto extends javax.swing.JInternalFrame {
                                             .addComponent(jLabel10)
                                             .addComponent(spnVolumen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(spnPeso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(spnPeso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel11))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtColeccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(txtColeccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel12))
                                 .addGap(13, 13, 13)
                                 .addComponent(cboIdioma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -344,9 +370,9 @@ public class MaeProducto extends javax.swing.JInternalFrame {
                         .addComponent(jLabel15))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(26, 26, 26)
-                        .addComponent(jButton1)
+                        .addComponent(btnAdd)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2))
+                        .addComponent(btnRemove))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -399,16 +425,21 @@ public class MaeProducto extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        // TODO add your handling code here:
+        System.out.println(con.getKey(lstAutorO));
+    }//GEN-LAST:event_btnAddActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnRemove;
     private javax.swing.JComboBox<String> cboAnio;
     private javax.swing.JComboBox<String> cboCategoria;
     private javax.swing.JComboBox<String> cboEditorial;
     private javax.swing.JComboBox<String> cboIdioma;
     private javax.swing.JComboBox<String> cboTipo;
     private javax.swing.JTable dgvDatos;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
