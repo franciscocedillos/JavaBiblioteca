@@ -22,7 +22,7 @@ public final class MaeProducto extends javax.swing.JInternalFrame {
      */
     
     ResultSet resultado;
-    private ResultSet rs;
+    private ResultSet rs = null;
     DefaultTableModel modelo = null;
     public static int bandera = 0;
     static int id;
@@ -502,8 +502,9 @@ public final class MaeProducto extends javax.swing.JInternalFrame {
                     con3.setRs("SELECT proId FROM Producto WHERE proIsbn = '" + txtCodigo.getText().trim() + "'");
                     rs = (ResultSet)con3.getRs();
                     rs.next();
+                    int id = rs.getInt(1);
                     for(int i = 0; i < autores.size(); i++){
-                        con.setQuery("INSER INTO ProductoAutor VALUES(null,"+ autores.get(i) +","+rs.getInt(1)+")");
+                        con.setQuery("INSER INTO ProductoAutor VALUES(null,"+ autores.get(i) +","+id+")");
                     }
                     rs.close();
                     JOptionPane.showMessageDialog(null, "Producto ingresado exitosamente", "Transacción", JOptionPane.INFORMATION_MESSAGE, null);
@@ -514,7 +515,7 @@ public final class MaeProducto extends javax.swing.JInternalFrame {
                 
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+            JOptionPane.showMessageDialog(null, "ERROR. Ocurrió un problema en la BD: "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
         }
     }//GEN-LAST:event_btnNuevoActionPerformed
 
