@@ -5,6 +5,10 @@
  */
 package sv.edu.udb.catedra;
 
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Lance
@@ -66,9 +70,15 @@ public class ContenedorUsuario extends javax.swing.JFrame {
     private void menuBusquedaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuBusquedaMouseClicked
         desktopPane.removeAll();
         desktopPane.repaint();
-        BusquedaLibro b1 = new BusquedaLibro();
-        desktopPane.add(b1);
-        b1.show();
+        BusquedaLibro b1;
+        try {
+            b1 = new BusquedaLibro();
+            desktopPane.add(b1);
+            b1.show();
+        } catch (SQLException ex) {
+            Logger.getLogger(ContenedorUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }//GEN-LAST:event_menuBusquedaMouseClicked
 
     /**
