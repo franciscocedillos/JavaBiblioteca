@@ -93,7 +93,6 @@ public class Conexion {
     public void llenarList(JList list) throws SQLException{
         try {
             list.removeAll();
-            ArrayList listado = new ArrayList();
             list.setModel(modelo);
             rs = getRs();
             while (rs.next()) {
