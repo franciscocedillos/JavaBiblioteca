@@ -25,7 +25,7 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
     /**
      * Creates new form BusquedaLibro
      */
-    public BusquedaLibro()  throws SQLException {
+    public BusquedaLibro() throws SQLException {
         initComponents();
     }
 
@@ -87,9 +87,9 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
         jScrollPane1.setViewportView(jTable1);
 
         jButton1.setText("Iniciar consulta");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -138,26 +138,27 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
         titulo = jTextField1.getText();
         autor = jTextField2.getText();
-        if (titulo != "" || autor != "") {
+
+        System.out.println(titulo + "" + autor);
+
+        if (jTextField1.getText().equals("") && jTextField2.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Por favor llene al menos uno de los campos de búsqueda", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
             try {
-                initComponents();
                 Object[][] data = null;
                 String[] columns = {"Título", "Autor"};
                 modelo1 = new DefaultTableModel(data, columns);
                 this.jTable1.setModel(modelo1);
-                con3.setRs("select a.ProNombre, p.autNombre from producto a inner join productoautor ap on ap.proId = a.proId inner join autor p on p.autId = ap.autId where a.proNombre like '%"+titulo+"%' OR p.autNombre like '%"+autor+"%'");
+                con3.setRs("select a.ProNombre, p.autNombre from producto a inner join productoautor ap on ap.proId = a.proId inner join autor p on p.autId = ap.autId where a.proNombre like '%" + titulo + "%' OR p.autNombre like '%" + autor + "%'");
                 generarListado();
             } catch (SQLException e) {
-
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Debe ingresar datos en los campos de búsqueda");
         }
-    }//GEN-LAST:event_jButton1MouseClicked
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

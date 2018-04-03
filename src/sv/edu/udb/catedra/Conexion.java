@@ -21,7 +21,8 @@ public class Conexion {
     private PreparedStatement st = null;
     private ResultSet rs=null;
     private String query="";
-    private DefaultListModel modelo = new DefaultListModel();
+    private DefaultListModel modeloO = new DefaultListModel();
+    private DefaultListModel modeloD = new DefaultListModel();
     
     //Contructor
     public Conexion() throws SQLException{
@@ -93,29 +94,42 @@ public class Conexion {
     public void llenarList(JList list) throws SQLException{
         try {
             list.removeAll();
-            list.setModel(modelo);
+            list.setModel(modeloO);
             rs = getRs();
             while (rs.next()) {
                 Item objeto = new Item(rs.getInt(1), rs.getString(2));
-                modelo.addElement(objeto);
+                modeloO.addElement(objeto);
             }
         } catch (SQLException ex) {
             
         }
     }
     
-    public int getKey(JList list){
-        /*Object item1 = list.getSelectedValue();
-        int value = ((Item)item1).getId();
-        return value;*/
+    public void moverList(JList listO, JList listD){
         try {
-            Item objeto = (Item)modelo.getElementAt(list.getSelectedIndex());
-            int value = objeto.getId();
-            return value;
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
-            return -1;
+            listD.setModel(modeloD);
+            Item itemMove = new Item(getKey(listO), listO.getSelectedValue().toString());
+            modeloD.addElement(itemMove);
+            modeloO.remove(listO.getSelectedIndex());
+        } catch (Exception ex) {
+            
         }
+    }
+    
+    public void returnList(JList listO, JList listD){
+        try {
+            Item itemReturn= new Item(getKey(listD), listD.getSelectedValue().toString());
+            modeloO.addElement(itemReturn);
+            modeloD.remove(listD.getSelectedIndex());
+        } catch (Exception ex) {
+            
+        }
+    }
+    
+    public int getKey(JList list){
+        Item objeto = (Item)modeloO.getElementAt(list.getSelectedIndex());
+        int value = objeto.getId();
+        return value;
         
     }
     
