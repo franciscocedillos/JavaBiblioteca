@@ -79,7 +79,7 @@ public final class MaeProducto extends javax.swing.JInternalFrame {
         try {
             Conexion con2 = new Conexion();
             con2.setRs("SELECT p.proId,p.proIsbn,p.proNombre,t.tproNombre,c.cproNombre FROM Producto p INNER JOIN CategoriaProducto c ON p.cproId = c.cproId INNER JOIN TipoProducto t ON p.tproId = t.tproId");
-            resultado = (ResultSet) con.getRs();
+            resultado = (ResultSet) con2.getRs();
             while (resultado.next()) {
                 Object [] newRow={resultado.getInt(1),resultado.getString(2),resultado.getString(3),resultado.getString(4),resultado.getString(5)};
                 modelo.addRow(newRow);
