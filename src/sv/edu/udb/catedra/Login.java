@@ -160,6 +160,7 @@ public class Login extends javax.swing.JFrame {
         String id_tipo = "";
         String usuario = "";
         String password = "";
+        int maxPrestamo;
         try {
             if(!(txtNombreUsuario.getText().trim().isEmpty() || txtPassword.getPassword().length == 0)){
                 CheckPassword verificar = new CheckPassword();
@@ -167,20 +168,23 @@ public class Login extends javax.swing.JFrame {
                 if (verificar.verificarPassword(passArray)) {
                     String pass = new String(passArray);
                     Conexion con = new Conexion();//creamos el objeto para la conexion
-                    con.setRs("select tusrId, COUNT(usrId) as cant from Usuario where usrCodigo = '"
-                            + txtNombreUsuario.getText() + "' AND usrPassword = SHA2('" + pass + "',256) GROUP BY usrId");//consulta
+                    con.setRs("select u.tusrId,u.usrId,tu.tusrMaxPrestamo, COUNT(usrId) as cant FROM Usuario u INNER JOIN TipoUsuario tu ON u.tusrId = tu.tusrId\n" +
+                        "where usrCodigo = " + txtNombreUsuario.getText() + "' AND usrPassword = SHA2('" + pass + "',256) GROUP BY u.usrId");//consulta
                     ResultSet valor = (ResultSet) con.getRs();//obtenemos los valores
                     if(valor.next()){//nos movemos al unico registro devuelto
                         id_tipo = valor.getString(1);//obtenemos el id del tipo de usuario
                         usuario = valor.getString(2);//obtenemos el usuario
+                        maxPrestamo = valor.getInt(3);
                         //verificamos si el usuario y el password de la base son iguales a los ingresados en los txt
-                        if (valor.getInt(2) == 1) {
+                        if (valor.getInt(4) == 1) {
                             //si este es un usuario de tipo administrador
                             if (id_tipo.equals("1")) {
                                 new Contenedor().setVisible(true);
+                                Contenedor.usrId = usuario;Contenedor.maxPrestamo = maxPrestamo;
                                 this.dispose();
                             } else {
                                 new ContenedorUsuario().setVisible(true);
+                                ContenedorUsuario.usrId = usuario;ContenedorUsuario.maxPrestamo = maxPrestamo;
                                 this.dispose();
                             }
                         } else {

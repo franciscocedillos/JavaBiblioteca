@@ -15,6 +15,9 @@ public class Contenedor extends javax.swing.JFrame {
     /**
      * Creates new form Contenedor
      */
+    public static String usrId;
+    public static int maxPrestamo;
+    
     public Contenedor() {
         initComponents();
         setLocationRelativeTo(null);

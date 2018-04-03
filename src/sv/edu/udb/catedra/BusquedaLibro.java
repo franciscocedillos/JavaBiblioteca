@@ -7,6 +7,10 @@ package sv.edu.udb.catedra;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -21,6 +25,10 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
     DefaultTableModel modelo1 = null;
     ResultSet resultado = null;
     Conexion con3 = new Conexion();
+    private final java.util.Date fechaActual = new java.util.Date();
+    SimpleDateFormat formateador = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat stringToDate = new SimpleDateFormat("yyyy-MM-dd");
+    int proId;
 
     /**
      * Creates new form BusquedaLibro
@@ -32,7 +40,7 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
     public void generarListado() throws SQLException {
         resultado = con3.getRs();
         while (resultado.next()) {
-            Object[] newRow = {resultado.getString(1), resultado.getString(2)};
+            Object[] newRow = {resultado.getString(1), resultado.getString(2), resultado.getString(3), resultado.getString(4)};
             modelo1.addRow(newRow);
         }
 
@@ -56,10 +64,9 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        btnPrestar = new javax.swing.JButton();
 
         setClosable(true);
-        setIconifiable(true);
-        setMaximizable(true);
         setResizable(true);
         setTitle("Búsqueda de libros");
 
@@ -75,21 +82,37 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Título", "Autor(es)"
+                "Título", "Autor(es)", "Copias"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(1).setResizable(false);
+            jTable1.getColumnModel().getColumn(2).setResizable(false);
+        }
 
         jButton1.setText("Iniciar consulta");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+
+        btnPrestar.setText("Prestar");
+        btnPrestar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrestarActionPerformed(evt);
             }
         });
 
@@ -102,24 +125,36 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(100, 100, 100)
+                                .addComponent(btnPrestar)))
+                        .addContainerGap(256, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(btnPrestar)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -128,7 +163,7 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
                 .addComponent(jButton1)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -148,18 +183,51 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
         } else {
             try {
                 Object[][] data = null;
-                String[] columns = {"Título", "Autor"};
+                String[] columns = {"Código","Título", "Autor","Copias"};
                 modelo1 = new DefaultTableModel(data, columns);
                 this.jTable1.setModel(modelo1);
-                con3.setRs("select a.ProNombre, p.autNombre from producto a inner join productoautor ap on ap.proId = a.proId inner join autor p on p.autId = ap.autId where a.proNombre like '%" + titulo + "%' OR p.autNombre like '%" + autor + "%'");
+                con3.setRs("SELECT a.proIsbn,a.ProNombre, p.autNombre,COUNT(c.cpId) as copia FROM Producto a \n" +
+                    "INNER JOIN ProductoAutor ap ON ap.proId = a.proId \n" +
+                    "INNER JOIN Autor p ON p.autId = ap.autId\n" +
+                    "INNER JOIN Copia c ON a.proId = c.proId\n" +
+                    "WHERE a.proNombre LIKE '%" + titulo + "%' OR p.autNombre LIKE '%" + autor + "%' AND c.stpId = 1\n" +
+                    "GROUP BY a.proIsbn,a.ProNombre,p.autNombre\n" +
+                    "HAVING COUNT(c.cpId)");
                 generarListado();
             } catch (SQLException e) {
             }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void btnPrestarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrestarActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnPrestarActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        int fila = jTable1.rowAtPoint(evt.getPoint());
+        if ((fila > -1)) {
+            btnPrestar.setEnabled(true);
+            String id = modelo1.getValueAt(fila, 0).toString();
+            try {
+                Conexion con2 = new Conexion();
+                con2.setRs("SELECT proId FROM Producto WHERE proIsbn = '" + id + "'");
+                resultado = (ResultSet)con2.getRs();
+                resultado.next();
+                proId = resultado.getInt(1);
+                con2.setRs("SELECT COUNT(prstId) from Prestamo Where usrId="+ContenedorUsuario.usrId);
+                con2.setQuery("INSERT INTO Prestamo(prstFechaPres,prstFechaPrevDev,prstFechaDev,usrId,proId) "
+                        + "VALUES('"+formateador.format(fechaActual)+"','"+formateador.format(fechaActual) +"',null,"+Contenedor.usrId+proId+")" );
+            } catch (SQLException e) {
+            }
+            
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnPrestar;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
