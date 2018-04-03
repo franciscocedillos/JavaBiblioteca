@@ -26,12 +26,13 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
     ResultSet resultado;
     DefaultTableModel modelo = null;
     public static int bandera = 0;
-    static int id;
+    static int id, max;
     Conexion con;
     DateFormat df = DateFormat.getDateInstance();
     private final java.util.Date fechaActual = new java.util.Date();
     SimpleDateFormat formateador = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat stringToDate = new SimpleDateFormat("yyyy-MM-dd");
+    String codigo;
     
     public MaeUsuarios() {
         initComponents();
@@ -79,6 +80,27 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
         }
     }
+    
+    public void limpiar(){
+        cboTipo.setSelectedIndex(0);txtNombre.setText("");txtApellido.setText("");txtDireccion.setText("");txtTelefono.setText("");
+        txtPassword.setText("");dtpFechaNac.setDate(fechaActual);
+    }
+    
+    private Boolean validar(){
+        if(txtNombre.getText().isEmpty() || txtApellido.getText().isEmpty() || txtPassword.getPassword().length == 0 || df.format(dtpFechaNac.getDate()).isEmpty()){
+            JOptionPane.showMessageDialog(null, "Debe ingresar los datos requeridos", "Error", JOptionPane.ERROR_MESSAGE, null);
+            return false;
+        }else{
+            if (dtpFechaNac.getDate().before(fechaActual)) {
+                return true;
+            } else {
+                JOptionPane.showMessageDialog(null, "La fecha ingresada debe ser menor que la actual", "Error", JOptionPane.ERROR_MESSAGE, null);
+                return false;
+            }
+        }
+    }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -126,6 +148,11 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
         jScrollPane1.setViewportView(dgvDatos);
 
         btnNuevo.setText("Nuevo");
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
 
         btnModificar.setText("Modificar");
 
@@ -259,6 +286,39 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        // TODO add your handling code here:
+        try {
+            if (btnNuevo.getText().equals("Nuevo")) {
+                btnModificar.setEnabled(false);
+                btnEliminar.setEnabled(false);
+                btnCancelar.setEnabled(true);
+                btnLimpiar.setEnabled(true);
+                btnNuevo.setText("Agregar");
+                limpiar();
+            } else {
+                if(validar()){
+                    Conexion con2 = new Conexion();
+                    con2.setRs("SELECT SUBSTRING(usrCodigo,4,7) AS maximo FROM Usuario ORDER BY usrId DESC LIMIT 1");
+                    resultado = (ResultSet)con2.getRs();
+                    resultado.next();
+                    max = Integer.parseInt(resultado.getString(1));
+                    
+                    codigo = formateador.format(fechaActual).substring(2, 4);
+                    con2.setQuery("INSERT INTO Usuario VALUES(null,"+con2.getValue(cboTipo)+",'"+txtNombre.getText().trim()+"','"+txtApellido.getText().trim()+"','"+
+                            txtDireccion.getText().trim()+"','"+txtTelefono.getText().trim()+"','"+formateador.format(dtpFechaNac.getDate()) +"')");
+                    JOptionPane.showMessageDialog(null, "Autor ingresado exitosamente", "Transacción", JOptionPane.INFORMATION_MESSAGE, null);
+                    con2.cerrarConexion();
+                    iniciarValores();
+                    limpiar();
+                }else
+                    JOptionPane.showMessageDialog(null, "ERROR: Debe ingresar los datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE, null);
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+        }
+    }//GEN-LAST:event_btnNuevoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
