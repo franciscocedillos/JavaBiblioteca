@@ -141,9 +141,7 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         titulo = jTextField1.getText();
-        autor = jTextField2.getText();
-
-        //System.out.println(titulo + "" + autor);
+        autor = jTextField2.getText();       
 
         if (jTextField1.getText().equals("") && jTextField2.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "Por favor llene al menos uno de los campos de búsqueda", "Error", JOptionPane.ERROR_MESSAGE);
