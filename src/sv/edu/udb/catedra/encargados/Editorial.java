@@ -111,6 +111,23 @@ public final class Editorial extends javax.swing.JInternalFrame {
 
         setClosable(true);
         setTitle("Editorial");
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameClosing(evt);
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+        });
 
         jLabel1.setText("Nombre:");
 
@@ -305,6 +322,7 @@ public final class Editorial extends javax.swing.JInternalFrame {
                     JOptionPane.showMessageDialog(null, "Editorial ingresada exitosamente", "Transacción", JOptionPane.INFORMATION_MESSAGE, null);
                     con2.cerrarConexion();
                     iniciarValores();
+                    limpiar();
                 }else
                     JOptionPane.showMessageDialog(null, "ERROR: Debe ingresar los datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE, null);
             }
@@ -384,6 +402,18 @@ public final class Editorial extends javax.swing.JInternalFrame {
             cboPais.setSelectedItem(modelo.getValueAt(fila, 4).toString());
         } else limpiar();
     }//GEN-LAST:event_dgvDatosMouseClicked
+
+    private void formInternalFrameClosing(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosing
+        // TODO add your handling code here:
+        try{
+            bandera=0;
+            this.dispose();
+            con.cerrarConexion();
+        }
+        catch (SQLException ex){
+            Logger.getLogger(Editorial.class.getName()).log(Level.SEVERE, null,ex);
+        }
+    }//GEN-LAST:event_formInternalFrameClosing
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

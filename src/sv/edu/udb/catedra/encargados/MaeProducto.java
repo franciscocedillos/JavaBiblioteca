@@ -66,6 +66,7 @@ public final class MaeProducto extends javax.swing.JInternalFrame {
             btnCancelar.setEnabled(false);
             btnLimpiar.setEnabled(false);
             con.cerrarConexion();
+            
         } catch (SQLException ex) {
             Logger.getLogger(MaeProducto.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
@@ -147,6 +148,7 @@ public final class MaeProducto extends javax.swing.JInternalFrame {
         btnRemove = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         lstAutorO = new javax.swing.JList<>();
+        jTabbedPane2 = new javax.swing.JTabbedPane();
         btnNuevo = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
         btnModificar = new javax.swing.JButton();
@@ -156,6 +158,23 @@ public final class MaeProducto extends javax.swing.JInternalFrame {
         setClosable(true);
         setResizable(true);
         setTitle("Maestro de Productos");
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameClosing(evt);
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(153, 204, 255));
 
@@ -170,6 +189,12 @@ public final class MaeProducto extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        dgvDatos.setColumnSelectionAllowed(false);
+        dgvDatos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                dgvDatosMouseClicked(evt);
+            }
+        });
         jScrollPane4.setViewportView(dgvDatos);
 
         jTabbedPane1.addTab("Listado", jScrollPane4);
@@ -402,6 +427,7 @@ public final class MaeProducto extends javax.swing.JInternalFrame {
         );
 
         jTabbedPane1.addTab("Detalle", jPanel2);
+        jTabbedPane1.addTab("Copias", jTabbedPane2);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -431,6 +457,11 @@ public final class MaeProducto extends javax.swing.JInternalFrame {
         btnModificar.setText("Modificar");
 
         btnLimpiar.setText("Limpiar");
+        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setText("Cancelar");
 
@@ -493,22 +524,20 @@ public final class MaeProducto extends javax.swing.JInternalFrame {
                 btnNuevo.setText("Agregar");
                 limpiar();
             } else {
-                String sql =  "INSERT INTO Producto VALUES(null,"+con.getValue(cboTipo)+","+con.getValue(cboCategoria)+",'"+txtCodigo.getText().trim() +"','"+txtNombre.getText().trim()+
-                            "',"+con.getValue(cboEditorial)+","+spnPaginas.getValue()+","+spnEdicion.getValue().toString()+",'"+txtLugar.getText().trim()+"',"+cboAnio.getSelectedItem()+","+spnVolumen.getValue().toString()+
-                            ","+spnPeso.getValue().toString()+",'"+txtColeccion.getText().trim()+"',"+con.getValue(cboIdioma)+",'"+txtDescripcion.getText().trim() +"',null)";
-                    Conexion con2 = new Conexion();
-                    con2.setQuery(sql);
-                    Conexion con3 = new Conexion();
+                Conexion con3 = new Conexion();
+                String sql =  "INSERT INTO Producto VALUES(null,"+con3.getValue(cboTipo)+","+con3.getValue(cboCategoria)+",'"+txtCodigo.getText().trim() +"','"+txtNombre.getText().trim()+
+                            "',"+con3.getValue(cboEditorial)+","+spnPaginas.getValue()+","+spnEdicion.getValue().toString()+",'"+txtLugar.getText().trim()+"',"+cboAnio.getSelectedItem()+","+spnVolumen.getValue().toString()+
+                            ","+spnPeso.getValue().toString()+",'"+txtColeccion.getText().trim()+"',"+con3.getValue(cboIdioma)+",'"+txtDescripcion.getText().trim() +"',null)";
+                    
+                    con3.setQuery(sql);
                     con3.setRs("SELECT proId FROM Producto WHERE proIsbn = '" + txtCodigo.getText().trim() + "'");
                     rs = (ResultSet)con3.getRs();
                     rs.next();
-                    int id = rs.getInt(1);
                     for(int i = 0; i < autores.size(); i++){
-                        con.setQuery("INSER INTO ProductoAutor VALUES(null,"+ autores.get(i) +","+id+")");
+                        con.setQuery("INSERT INTO ProductoAutor VALUES(null,"+ autores.get(i) +","+rs.getInt(1)+")");
                     }
                     rs.close();
                     JOptionPane.showMessageDialog(null, "Producto ingresado exitosamente", "Transacción", JOptionPane.INFORMATION_MESSAGE, null);
-                    con2.cerrarConexion();
                     con3.cerrarConexion();
                     iniciarValores();
                     limpiar();
@@ -518,6 +547,55 @@ public final class MaeProducto extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, "ERROR. Ocurrió un problema en la BD: "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
         }
     }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void formInternalFrameClosing(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosing
+        // TODO add your handling code here:
+        try{
+            bandera=0;
+            this.dispose();
+            con.cerrarConexion();
+        }
+        catch (SQLException ex){
+            Logger.getLogger(MaeProducto.class.getName()).log(Level.SEVERE, null,ex);
+        }
+    }//GEN-LAST:event_formInternalFrameClosing
+    
+    
+    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+        // TODO add your handling code here:
+        limpiar();
+    }//GEN-LAST:event_btnLimpiarActionPerformed
+
+    private void dgvDatosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dgvDatosMouseClicked
+        // TODO add your handling code here:
+        try {
+                int fila = dgvDatos.rowAtPoint(evt.getPoint());
+                if ((fila > -1)) {
+                    btnModificar.setEnabled(true);
+                    btnEliminar.setEnabled(true);
+                    id = Integer.parseInt(modelo.getValueAt(fila, 0).toString());
+                    Conexion con2 = new Conexion();
+                    con2.setRs("SELECT * FROM Producto WHERE proId = " + id);
+                    resultado = (ResultSet)con.getRs();
+                    cboTipo.setSelectedIndex(resultado.getInt(2));
+                    cboCategoria.setSelectedIndex(resultado.getInt(3));
+                    txtCodigo.setText(resultado.getString(4));
+                    txtNombre.setText(resultado.getString(5));
+                    cboEditorial.setSelectedIndex(resultado.getInt(6));
+                    spnPaginas.setValue(resultado.getInt(7));
+                    spnEdicion.setValue(resultado.getInt(8));
+                    txtLugar.setText(resultado.getString(9));
+                    cboAnio.setSelectedItem(resultado.getInt(10));
+                    spnVolumen.setValue(resultado.getInt(11));
+                    spnPeso.setValue(resultado.getInt(12));
+                    txtColeccion.setText(resultado.getString(13));
+                    cboIdioma.setSelectedIndex(resultado.getInt(14));
+                    txtDescripcion.setText(resultado.getString(15));
+                    txtCodigo.setText("hola " + id);
+                } else limpiar();
+        } catch (SQLException e) {
+        }
+    }//GEN-LAST:event_dgvDatosMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -556,6 +634,7 @@ public final class MaeProducto extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JList<String> lstAutorD;
     private javax.swing.JList<String> lstAutorO;
     private javax.swing.JSpinner spnEdicion;
