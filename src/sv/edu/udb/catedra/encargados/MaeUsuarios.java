@@ -146,6 +146,11 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        dgvDatos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                dgvDatosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(dgvDatos);
 
         btnNuevo.setText("Nuevo");
@@ -156,8 +161,18 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
         });
 
         btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         btnLimpiar.setText("Limpiar");
 
@@ -345,6 +360,80 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
         }
     }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void dgvDatosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dgvDatosMouseClicked
+        // TODO add your handling code here:
+        int fila = dgvDatos.rowAtPoint(evt.getPoint());
+        if ((fila > -1)) {
+            btnModificar.setEnabled(true);
+            btnEliminar.setEnabled(true);
+            id = Integer.parseInt(modelo.getValueAt(fila, 0).toString());
+            try {
+                Conexion con2 = new Conexion();
+                con2.setRs("SELECT usrNombre,usrApellido,usrDireccion,usrTelefono,tusrId FROM Usuario WHERE usrId = " + id);
+                resultado = (ResultSet)con2.getRs();
+                resultado.next();
+                txtNombre.setText(resultado.getString(1));
+                txtApellido.setText(resultado.getString(2));
+                txtDireccion.setText(resultado.getString(3));
+                txtTelefono.setText(resultado.getString(4));
+                try {
+                    dtpFechaNac.setDate(stringToDate.parse(modelo.getValueAt(fila, 3).toString()));
+                } catch (ParseException ex) {
+                    Logger.getLogger(MaeAutor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                cboTipo.setSelectedIndex((resultado.getInt(5) - 1));
+            } catch (SQLException e) {
+            }
+            
+        } else limpiar();
+    }//GEN-LAST:event_dgvDatosMouseClicked
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // TODO add your handling code here:
+        try {
+            if(JOptionPane.showConfirmDialog(null, "¿Desea eliminar el usuario " + txtNombre.getText() + "?","Confirmación",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                Conexion con2 = new Conexion();    
+                con2.setQuery("DELETE FROM Usuario WHERE usrId = " + id);
+                con2.cerrarConexion();
+                JOptionPane.showMessageDialog(this, "Usuario eliminado exitosamente");
+                limpiar();
+                iniciarValores();
+            }
+        } catch (SQLException ex){
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        // TODO add your handling code here:
+        try {
+            if (btnModificar.getText().equals("Modificar")) {
+                btnNuevo.setEnabled(false);
+                btnEliminar.setEnabled(false);
+                btnCancelar.setEnabled(true);
+                btnLimpiar.setEnabled(true);
+                btnModificar.setText("Actualizar");
+            } else {
+                if (validar()) {
+                    if(JOptionPane.showConfirmDialog(null, "¿Desea modificar el autor " + txtNombre.getText() + "?","Confirmación",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                        Conexion con2 = new Conexion();
+                        con2.setQuery("UPDATE Usuario SET usrNombre='" + txtNombre.getText().trim() + "',usrApellido='" + txtApellido.getText().trim() + 
+                                "',usrDireccion"+txtDireccion.getText().trim()+"','"+txtTelefono.getText().trim()+"',usrFechaNac = '" + formateador.format(dtpFechaNac.getDate()) + "' WHERE usrId = " + id);
+                        con2.cerrarConexion();
+                        JOptionPane.showMessageDialog(this, "Usuario modificado exitosamente");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Debe ingresar los campos requeridos");
+                }
+                btnModificar.setText("Modificar");
+                iniciarValores();
+                limpiar();
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+        }
+    }//GEN-LAST:event_btnModificarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
