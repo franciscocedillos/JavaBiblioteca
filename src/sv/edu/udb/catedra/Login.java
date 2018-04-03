@@ -166,15 +166,14 @@ public class Login extends javax.swing.JFrame {
             if (verificar.verificarPassword(passArray)) {
                 String pass = new String(passArray);
                 Conexion con = new Conexion();//creamos el objeto para la conexion
-                con.setRs("select tusrId, usrCodigo, usrPassword from Usuario where usrCodigo = " + "'"
-                        + txtNombreUsuario.getText() + "'");//consulta
+                con.setRs("select tusrId, COUNT(usrId) as cant from Usuario where usrCodigo = " + "'"
+                        + txtNombreUsuario.getText() + "' AND usrPassword = SHA2('" + pass + "',256) GROUP BY usrId");//consulta
                 ResultSet valor = (ResultSet) con.getRs();//obtenemos los valores
                 valor.next();//nos movemos al unico registro devuelto
                 id_tipo = valor.getString(1);//obtenemos el id del tipo de usuario
                 usuario = valor.getString(2);//obtenemos el usuario
-                password = valor.getString(3);//obtenemos el password del usuario
                 //verificamos si el usuario y el password de la base son iguales a los ingresados en los txt
-                if (txtNombreUsuario.getText().equals(usuario) && pass.equals(password)) {
+                if (valor.getInt(2) == 1) {
                     //si este es un usuario de tipo administrador
                     if (id_tipo.equals("1")) {
                         new Contenedor().setVisible(true);
