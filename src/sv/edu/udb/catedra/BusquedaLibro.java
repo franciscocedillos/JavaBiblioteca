@@ -32,7 +32,7 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
     public void generarListado() throws SQLException {
         resultado = con3.getRs();
         while (resultado.next()) {
-            Object[] newRow = {resultado.getInt(1), resultado.getString(2), resultado.getString(3)};
+            Object[] newRow = {resultado.getString(1), resultado.getString(2)};
             modelo1.addRow(newRow);
         }
 
@@ -149,7 +149,7 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
                 String[] columns = {"Título", "Autor"};
                 modelo1 = new DefaultTableModel(data, columns);
                 this.jTable1.setModel(modelo1);
-                con3.setRs("select a.ProNombre, p.autNombre, from producto a inner join productoautor ap on ap.proId = a.proId inner join autor p on p.autId = ap.autId where a.proNombre like '%" + titulo + "%' AND p.autNombre like '%" + autor + "%'");
+                con3.setRs("select a.ProNombre, p.autNombre from producto a inner join productoautor ap on ap.proId = a.proId inner join autor p on p.autId = ap.autId where a.proNombre like '%"+titulo+"%' OR p.autNombre like '%"+autor+"%'");
                 generarListado();
             } catch (SQLException e) {
 
