@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package sv.edu.udb.catedra.encargados;
+
 import sv.edu.udb.catedra.*;
 import java.sql.*;
 import java.text.DateFormat;
@@ -14,6 +15,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import sv.edu.udb.util.CheckPassword;
+
 /**
  *
  * @author luigi
@@ -23,7 +25,6 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
     /**
      * Creates new form Usuarios
      */
-    
     ResultSet resultado;
     DefaultTableModel modelo = null;
     public static int bandera = 0;
@@ -34,17 +35,17 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
     SimpleDateFormat formateador = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat stringToDate = new SimpleDateFormat("yyyy-MM-dd");
     String codigo;
-    
+
     public MaeUsuarios() {
         initComponents();
-        Object [][] data = null;
-        String [] columns = {"ID","Código","Usuario","Fecha de Nacimineto","Tipo de Usuario"};
-        modelo = new DefaultTableModel(data,columns);
+        Object[][] data = null;
+        String[] columns = {"ID", "Código", "Usuario", "Fecha de Nacimineto", "Tipo de Usuario"};
+        modelo = new DefaultTableModel(data, columns);
         this.dgvDatos.setModel(modelo);
         iniciarValores();
     }
-    
-    public void iniciarValores(){
+
+    public void iniciarValores() {
         try {
             con = new Conexion();
             con.setRs("SELECT tusrId,tusrTipo FROM TipoUsuario");
@@ -59,39 +60,44 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
             dtpFechaNac.setDate(fechaActual);
         } catch (SQLException ex) {
             Logger.getLogger(Editorial.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
         }
     }
-    
-    public void generarListado(){
-        while (modelo.getRowCount()!=0) {
+
+    public void generarListado() {
+        while (modelo.getRowCount() != 0) {
             modelo.removeRow(0);
         }
         try {
-            con.setRs("SELECT u.usrId,u.usrCodigo,CONCAT(usrNombre,' ',usrApellido) AS nombre,u.usrFechaNac,tu.tusrTipo FROM Usuario u\n" +
-                "INNER JOIN TipoUsuario tu ON u.tusrId = tu.tusrId");
+            con.setRs("SELECT u.usrId,u.usrCodigo,CONCAT(usrNombre,' ',usrApellido) AS nombre,u.usrFechaNac,tu.tusrTipo FROM Usuario u\n"
+                    + "INNER JOIN TipoUsuario tu ON u.tusrId = tu.tusrId");
             resultado = (ResultSet) con.getRs();
             while (resultado.next()) {
-                Object [] newRow={resultado.getInt(1),resultado.getString(2),resultado.getString(3),resultado.getString(4),resultado.getString(5)};
+                Object[] newRow = {resultado.getInt(1), resultado.getString(2), resultado.getString(3), resultado.getString(4), resultado.getString(5)};
                 modelo.addRow(newRow);
             }
             resultado.close();
         } catch (SQLException | NullPointerException ex) {
             Logger.getLogger(Editorial.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
         }
     }
-    
-    public void limpiar(){
-        cboTipo.setSelectedIndex(0);txtNombre.setText("");txtApellido.setText("");txtDireccion.setText("");txtTelefono.setText("");
-        txtPassword.setText("");dtpFechaNac.setDate(fechaActual);
+
+    public void limpiar() {
+        cboTipo.setSelectedIndex(0);
+        txtNombre.setText("");
+        txtApellido.setText("");
+        txtDireccion.setText("");
+        txtTelefono.setText("");
+        txtPassword.setText("");
+        dtpFechaNac.setDate(fechaActual);
     }
-    
-    private Boolean validar(){
-        if(txtNombre.getText().isEmpty() || txtApellido.getText().isEmpty() || txtPassword.getPassword().length == 0 || df.format(dtpFechaNac.getDate()).isEmpty()){
+
+    private Boolean validar() {
+        if (txtNombre.getText().isEmpty() || txtApellido.getText().isEmpty() || txtPassword.getPassword().length == 0 || df.format(dtpFechaNac.getDate()).isEmpty()) {
             JOptionPane.showMessageDialog(null, "Debe ingresar los datos requeridos", "Error", JOptionPane.ERROR_MESSAGE, null);
             return false;
-        }else{
+        } else {
             if (dtpFechaNac.getDate().before(fechaActual)) {
                 return true;
             } else {
@@ -100,8 +106,6 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
             }
         }
     }
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -305,18 +309,18 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public boolean verificarPass(char passArray[]){
-        if(passArray.length==0){
+    public boolean verificarPass(char passArray[]) {
+        if (passArray.length == 0) {
             return false;
         }
-        for(int i = 0; i < passArray.length; i++){
-            if(!Character.isLetterOrDigit(passArray[i])){
+        for (int i = 0; i < passArray.length; i++) {
+            if (!Character.isLetterOrDigit(passArray[i])) {
                 return false;
             }
         }
         return true;
     }
-    
+
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         // TODO add your handling code here:
         try {
@@ -328,38 +332,40 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
                 btnNuevo.setText("Agregar");
                 limpiar();
             } else {
-                if(validar()){
+                if (validar()) {
                     char passArray[] = txtPassword.getPassword();
-                    if(verificarPass(passArray)){
+                    if (verificarPass(passArray)) {
                         String password = new String(txtPassword.getPassword());
                         Conexion con2 = new Conexion();
                         con2.setRs("SELECT COUNT(usrCodigo) AS maximo FROM Usuario");
-                        resultado = (ResultSet)con2.getRs();
+                        resultado = (ResultSet) con2.getRs();
                         resultado.next();
                         max = Integer.parseInt(resultado.getString(1));
                         max++;
-                        codigo = txtNombre.getText().trim().substring(0,1)+txtApellido.getText().trim().substring(0,1)+formateador.format(fechaActual).substring(2, 4);
-                        if (max < 10)
+                        codigo = txtNombre.getText().trim().substring(0, 1) + txtApellido.getText().trim().substring(0, 1) + formateador.format(fechaActual).substring(2, 4);
+                        if (max < 10) {
                             codigo += "000" + max;
-                        else if (max < 100)
+                        } else if (max < 100) {
                             codigo += "00" + max;
-                        else if (max < 1000)
+                        } else if (max < 1000) {
                             codigo += "0" + max;
-                        else if (max < 10000)
+                        } else if (max < 10000) {
                             codigo += max;
-                        
-                        con2.setQuery("INSERT INTO Usuario VALUES(null,"+con2.getValue(cboTipo)+",'"+codigo+"','"+txtNombre.getText().trim()+"','"+txtApellido.getText().trim()+"','"+
-                                txtDireccion.getText().trim()+"','"+txtTelefono.getText().trim()+"','"+formateador.format(dtpFechaNac.getDate()) +"',SHA2('"+password+"',256))");
+                        }
+
+                        con2.setQuery("INSERT INTO Usuario VALUES(null," + con2.getValue(cboTipo) + ",'" + codigo + "','" + txtNombre.getText().trim() + "','" + txtApellido.getText().trim() + "','"
+                                + txtDireccion.getText().trim() + "','" + txtTelefono.getText().trim() + "','" + formateador.format(dtpFechaNac.getDate()) + "',SHA2('" + password + "',256))");
                         JOptionPane.showMessageDialog(null, "Usuario ingresado exitosamente", "Transacción", JOptionPane.INFORMATION_MESSAGE, null);
                         con2.cerrarConexion();
                         iniciarValores();
                         limpiar();
                     }
-                }else
+                } else {
                     JOptionPane.showMessageDialog(null, "ERROR: Debe ingresar los datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE, null);
+                }
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
         }
     }//GEN-LAST:event_btnNuevoActionPerformed
 
@@ -373,7 +379,7 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
             try {
                 Conexion con2 = new Conexion();
                 con2.setRs("SELECT usrNombre,usrApellido,usrDireccion,usrTelefono,tusrId FROM Usuario WHERE usrId = " + id);
-                resultado = (ResultSet)con2.getRs();
+                resultado = (ResultSet) con2.getRs();
                 resultado.next();
                 txtNombre.setText(resultado.getString(1));
                 txtApellido.setText(resultado.getString(2));
@@ -387,23 +393,25 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
                 cboTipo.setSelectedIndex((resultado.getInt(5) - 1));
             } catch (SQLException e) {
             }
-            
-        } else limpiar();
+
+        } else {
+            limpiar();
+        }
     }//GEN-LAST:event_dgvDatosMouseClicked
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         // TODO add your handling code here:
         try {
-            if(JOptionPane.showConfirmDialog(null, "¿Desea eliminar el usuario " + txtNombre.getText() + "?","Confirmación",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                Conexion con2 = new Conexion();    
+            if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el usuario " + txtNombre.getText() + "?", "Confirmación", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                Conexion con2 = new Conexion();
                 con2.setQuery("DELETE FROM Usuario WHERE usrId = " + id);
                 con2.cerrarConexion();
                 JOptionPane.showMessageDialog(this, "Usuario eliminado exitosamente");
                 limpiar();
                 iniciarValores();
             }
-        } catch (SQLException ex){
-            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
@@ -418,10 +426,10 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
                 btnModificar.setText("Actualizar");
             } else {
                 if (!(txtNombre.getText().isEmpty() || txtApellido.getText().isEmpty() || df.format(dtpFechaNac.getDate()).isEmpty())) {
-                    if(JOptionPane.showConfirmDialog(null, "¿Desea modificar el autor " + txtNombre.getText() + "?","Confirmación",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    if (JOptionPane.showConfirmDialog(null, "¿Desea modificar el autor " + txtNombre.getText() + "?", "Confirmación", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                         Conexion con2 = new Conexion();
-                        con2.setQuery("UPDATE Usuario SET usrNombre='" + txtNombre.getText().trim() + "',usrApellido='" + txtApellido.getText().trim() + 
-                                "',usrDireccion='"+txtDireccion.getText().trim()+"',usrTelefono='"+txtTelefono.getText().trim()+"',usrFechaNac = '" + formateador.format(dtpFechaNac.getDate()) + "' WHERE usrId = " + id);
+                        con2.setQuery("UPDATE Usuario SET tusrId='" + con2.getValue(cboTipo) + "', usrNombre='" + txtNombre.getText().trim() + "',usrApellido='" + txtApellido.getText().trim()
+                                + "',usrDireccion='" + txtDireccion.getText().trim() + "',usrTelefono='" + txtTelefono.getText().trim() + "',usrFechaNac = '" + formateador.format(dtpFechaNac.getDate()) + "' WHERE usrId = " + id);
                         con2.cerrarConexion();
                         JOptionPane.showMessageDialog(this, "Usuario modificado exitosamente");
                     }
@@ -433,7 +441,7 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
                 limpiar();
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
         }
     }//GEN-LAST:event_btnModificarActionPerformed
 
