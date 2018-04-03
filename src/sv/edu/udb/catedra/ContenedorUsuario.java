@@ -20,6 +20,7 @@ public class ContenedorUsuario extends javax.swing.JFrame {
      */
     public ContenedorUsuario() {
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**
