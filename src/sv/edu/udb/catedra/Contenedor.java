@@ -8,6 +8,7 @@ package sv.edu.udb.catedra;
 import sv.edu.udb.catedra.encargados.Editorial;
 import sv.edu.udb.catedra.encargados.MaeAutor;
 import sv.edu.udb.catedra.encargados.MaeProducto;
+import sv.edu.udb.catedra.encargados.MaeUsuarios;
 
 public class Contenedor extends javax.swing.JFrame {
 
@@ -133,6 +134,11 @@ public class Contenedor extends javax.swing.JFrame {
         jMenu2.add(jMenuItem4);
 
         jMenuItem5.setText("Usuarios");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem5);
 
         encargadoMenu.add(jMenu2);
@@ -225,6 +231,16 @@ public class Contenedor extends javax.swing.JFrame {
             MaeProducto.bandera=1;
         }
     }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        // TODO add your handling code here:
+        if(MaeUsuarios.bandera ==0){
+            MaeUsuarios usr = new MaeUsuarios();
+            desktopPane.add(usr);
+            usr.show();
+            MaeProducto.bandera=1;
+        }
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     /**
      * @param args the command line arguments
