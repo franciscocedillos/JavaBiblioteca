@@ -15,13 +15,14 @@ import sv.edu.udb.catedra.Conexion;
  *
  * @author luigi
  */
-public class MaeProducto extends javax.swing.JInternalFrame {
+public final class MaeProducto extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form TipoProducto
      */
     
     ResultSet resultado;
+    private ResultSet rs;
     DefaultTableModel modelo = null;
     public static int bandera = 0;
     static int id;
@@ -31,7 +32,7 @@ public class MaeProducto extends javax.swing.JInternalFrame {
     public MaeProducto() {
         initComponents();
         Object [][] data = null;
-        String [] columns = {"ID","Código","Título","Tipo","Categoría","País"};
+        String [] columns = {"ID","Código","Título","Tipo","Categoría"};
         modelo = new DefaultTableModel(data,columns);
         this.dgvDatos.setModel(modelo);
         iniciarValores();
@@ -55,15 +56,15 @@ public class MaeProducto extends javax.swing.JInternalFrame {
             for (int i = 2018; i > 1950; i--) {
                 cboAnio.addItem("" + i);
             }
-            //ListView Autores
+           //ListView Autores
             con.setRs("SELECT autId,CONCAT(autNombre,' ',autApellido) AS Nombre FROM Autor ORDER BY Nombre ASC");
             con.llenarList(lstAutorO);
             generarListado();
-            /*btnNuevo.setEnabled(true);
+            btnNuevo.setEnabled(true);
             btnModificar.setEnabled(false);
             btnEliminar.setEnabled(false);
             btnCancelar.setEnabled(false);
-            btnLimpiar.setEnabled(false);*/
+            btnLimpiar.setEnabled(false);
             con.cerrarConexion();
         } catch (SQLException ex) {
             Logger.getLogger(MaeProducto.class.getName()).log(Level.SEVERE, null, ex);
@@ -77,8 +78,7 @@ public class MaeProducto extends javax.swing.JInternalFrame {
         }
         try {
             Conexion con2 = new Conexion();
-            con2.setRs("SELECT SELECT p.proId,p.proIsbn,p.proNombre,t.tproNombre,c.cproNombre FROM Producto p\n" +
-                "INNER JOIN CategoriaProducto c ON p.cproId = c.cproId INNER JOIN TipoProducto t ON p.tproId = t.tproId;");
+            con2.setRs("SELECT p.proId,p.proIsbn,p.proNombre,t.tproNombre,c.cproNombre FROM Producto p INNER JOIN CategoriaProducto c ON p.cproId = c.cproId INNER JOIN TipoProducto t ON p.tproId = t.tproId");
             resultado = (ResultSet) con.getRs();
             while (resultado.next()) {
                 Object [] newRow={resultado.getInt(1),resultado.getString(2),resultado.getString(3),resultado.getString(4),resultado.getString(5)};
@@ -147,8 +147,14 @@ public class MaeProducto extends javax.swing.JInternalFrame {
         btnRemove = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         lstAutorO = new javax.swing.JList<>();
+        btnNuevo = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        btnModificar = new javax.swing.JButton();
+        btnLimpiar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
 
         setClosable(true);
+        setResizable(true);
         setTitle("Maestro de Productos");
 
         jPanel1.setBackground(new java.awt.Color(153, 204, 255));
@@ -266,9 +272,9 @@ public class MaeProducto extends javax.swing.JInternalFrame {
                                             .addComponent(jLabel7)
                                             .addComponent(jLabel6))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(spnPaginas)
-                                            .addComponent(spnEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(spnEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(spnPaginas, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(jLabel8)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -407,11 +413,26 @@ public class MaeProducto extends javax.swing.JInternalFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
+                .addGap(35, 35, 35))
         );
+
+        btnNuevo.setText("Nuevo");
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
+
+        btnEliminar.setText("Eliminar");
+
+        btnModificar.setText("Modificar");
+
+        btnLimpiar.setText("Limpiar");
+
+        btnCancelar.setText("Cancelar");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -420,13 +441,31 @@ public class MaeProducto extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 12, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnNuevo)
+                .addGap(18, 18, 18)
+                .addComponent(btnEliminar)
+                .addGap(18, 18, 18)
+                .addComponent(btnModificar)
+                .addGap(18, 18, 18)
+                .addComponent(btnLimpiar)
+                .addGap(18, 18, 18)
+                .addComponent(btnCancelar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(22, 22, 22))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnNuevo)
+                    .addComponent(btnEliminar)
+                    .addComponent(btnModificar)
+                    .addComponent(btnLimpiar)
+                    .addComponent(btnCancelar))
+                .addGap(14, 14, 14)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -443,9 +482,50 @@ public class MaeProducto extends javax.swing.JInternalFrame {
         con.returnList(lstAutorD, lstAutorO);
     }//GEN-LAST:event_btnRemoveActionPerformed
 
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        // TODO add your handling code here:
+        try {
+            if (btnNuevo.getText().equals("Nuevo")) {
+                btnModificar.setEnabled(false);
+                btnEliminar.setEnabled(false);
+                btnCancelar.setEnabled(true);
+                btnLimpiar.setEnabled(true);
+                btnNuevo.setText("Agregar");
+                limpiar();
+            } else {
+                String sql =  "INSERT INTO Producto VALUES(null,"+con.getValue(cboTipo)+","+con.getValue(cboCategoria)+",'"+txtCodigo.getText().trim() +"','"+txtNombre.getText().trim()+
+                            "',"+con.getValue(cboEditorial)+","+spnPaginas.getValue()+","+spnEdicion.getValue().toString()+",'"+txtLugar.getText().trim()+"',"+cboAnio.getSelectedItem()+","+spnVolumen.getValue().toString()+
+                            ","+spnPeso.getValue().toString()+",'"+txtColeccion.getText().trim()+"',"+con.getValue(cboIdioma)+",'"+txtDescripcion.getText().trim() +"',null)";
+                    Conexion con2 = new Conexion();
+                    con2.setQuery(sql);
+                    Conexion con3 = new Conexion();
+                    con3.setRs("SELECT proId FROM Producto WHERE proIsbn = '" + txtCodigo.getText().trim() + "'");
+                    rs = (ResultSet)con3.getRs();
+                    rs.next();
+                    for(int i = 0; i < autores.size(); i++){
+                        con.setQuery("INSER INTO ProductoAutor VALUES(null,"+ autores.get(i) +","+rs.getInt(1)+")");
+                    }
+                    rs.close();
+                    JOptionPane.showMessageDialog(null, "Producto ingresado exitosamente", "Transacción", JOptionPane.INFORMATION_MESSAGE, null);
+                    con2.cerrarConexion();
+                    con3.cerrarConexion();
+                    iniciarValores();
+                    limpiar();
+                
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+        }
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnLimpiar;
+    private javax.swing.JButton btnModificar;
+    private javax.swing.JButton btnNuevo;
     private javax.swing.JButton btnRemove;
     private javax.swing.JComboBox<String> cboAnio;
     private javax.swing.JComboBox<String> cboCategoria;

@@ -32,7 +32,7 @@ public class Conexion {
             Class.forName("com.mysql.jdbc.Driver");
             // Se obtiene una conexión con la base de datos. 2
             conexion = DriverManager.getConnection (
-            "jdbc:mysql://localhost/sibylBiblioteca","root", "");
+            "jdbc:mysql://localhost/sibylBiblioteca","root", "admin123*");
             // Permite ejecutar sentencias SQL sin parámetros
             s = conexion.createStatement();
         }
