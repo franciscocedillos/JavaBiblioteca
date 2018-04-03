@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import sv.edu.udb.util.CheckPassword;
 /**
  *
  * @author luigi
@@ -287,6 +288,18 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public boolean verificarPass(char passArray[]){
+        if(passArray.length==0){
+            return false;
+        }
+        for(int i = 0; i < passArray.length; i++){
+            if(!Character.isLetterOrDigit(passArray[i])){
+                return false;
+            }
+        }
+        return true;
+    }
+    
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         // TODO add your handling code here:
         try {
@@ -299,19 +312,32 @@ public class MaeUsuarios extends javax.swing.JInternalFrame {
                 limpiar();
             } else {
                 if(validar()){
-                    Conexion con2 = new Conexion();
-                    con2.setRs("SELECT SUBSTRING(usrCodigo,4,7) AS maximo FROM Usuario ORDER BY usrId DESC LIMIT 1");
-                    resultado = (ResultSet)con2.getRs();
-                    resultado.next();
-                    max = Integer.parseInt(resultado.getString(1));
-                    
-                    codigo = formateador.format(fechaActual).substring(2, 4);
-                    con2.setQuery("INSERT INTO Usuario VALUES(null,"+con2.getValue(cboTipo)+",'"+txtNombre.getText().trim()+"','"+txtApellido.getText().trim()+"','"+
-                            txtDireccion.getText().trim()+"','"+txtTelefono.getText().trim()+"','"+formateador.format(dtpFechaNac.getDate()) +"')");
-                    JOptionPane.showMessageDialog(null, "Autor ingresado exitosamente", "Transacción", JOptionPane.INFORMATION_MESSAGE, null);
-                    con2.cerrarConexion();
-                    iniciarValores();
-                    limpiar();
+                    char passArray[] = txtPassword.getPassword();
+                    if(verificarPass(passArray)){
+                        String password = new String(txtPassword.getPassword());
+                        Conexion con2 = new Conexion();
+                        con2.setRs("SELECT COUNT(usrCodigo) AS maximo FROM Usuario");
+                        resultado = (ResultSet)con2.getRs();
+                        resultado.next();
+                        max = Integer.parseInt(resultado.getString(1));
+                        max++;
+                        codigo = txtNombre.getText().trim().substring(0,1)+txtApellido.getText().trim().substring(0,1)+formateador.format(fechaActual).substring(2, 4);
+                        if (max < 10)
+                            codigo += "000" + max;
+                        else if (max < 100)
+                            codigo += "00" + max;
+                        else if (max < 1000)
+                            codigo += "0" + max;
+                        else if (max < 10000)
+                            codigo += max;
+                        
+                        con2.setQuery("INSERT INTO Usuario VALUES(null,"+con2.getValue(cboTipo)+",'"+codigo+"','"+txtNombre.getText().trim()+"','"+txtApellido.getText().trim()+"','"+
+                                txtDireccion.getText().trim()+"','"+txtTelefono.getText().trim()+"','"+formateador.format(dtpFechaNac.getDate()) +"',SHA2('"+password+"',256))");
+                        JOptionPane.showMessageDialog(null, "Usuario ingresado exitosamente", "Transacción", JOptionPane.INFORMATION_MESSAGE, null);
+                        con2.cerrarConexion();
+                        iniciarValores();
+                        limpiar();
+                    }
                 }else
                     JOptionPane.showMessageDialog(null, "ERROR: Debe ingresar los datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE, null);
             }

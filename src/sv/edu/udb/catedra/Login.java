@@ -166,7 +166,7 @@ public class Login extends javax.swing.JFrame {
             if (verificar.verificarPassword(passArray)) {
                 String pass = new String(passArray);
                 Conexion con = new Conexion();//creamos el objeto para la conexion
-                con.setRs("select usuario.tusrId, usuario.usrCodigo, usuario.usrPassword from usuario where usuario.usrCodigo = " + "'"
+                con.setRs("select tusrId, usrCodigo, usrPassword from Usuario where usrCodigo = " + "'"
                         + txtNombreUsuario.getText() + "'");//consulta
                 ResultSet valor = (ResultSet) con.getRs();//obtenemos los valores
                 valor.next();//nos movemos al unico registro devuelto
