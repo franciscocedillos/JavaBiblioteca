@@ -75,13 +75,13 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
             },
             new String [] {
-                "Título", "Autor(es)", "Editorial", "Año"
+                "Título", "Autor(es)"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -149,9 +149,7 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
                 String[] columns = {"Título", "Autor"};
                 modelo1 = new DefaultTableModel(data, columns);
                 this.jTable1.setModel(modelo1);
-                con3.setRs("select a.ProNombre, p.autNombre, from producto a inner join productoautor ap "
-                        + "on ap.proId = a.proId inner join autor p on p.autId = ap.autId"
-                        + "where a.proNombre like '%" + titulo + "%' AND p.autNombre like '%" + autor + "%'");
+                con3.setRs("select a.ProNombre, p.autNombre, from producto a inner join productoautor ap on ap.proId = a.proId inner join autor p on p.autId = ap.autId where a.proNombre like '%" + titulo + "%' AND p.autNombre like '%" + autor + "%'");
                 generarListado();
             } catch (SQLException e) {
 
