@@ -5,6 +5,7 @@
  */
 package sv.edu.udb.catedra.encargados;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -25,6 +26,7 @@ public class MaeProducto extends javax.swing.JInternalFrame {
     public static int bandera = 0;
     static int id;
     Conexion con;
+    ArrayList autores = new ArrayList();
     
     public MaeProducto() {
         initComponents();
@@ -218,6 +220,11 @@ public class MaeProducto extends javax.swing.JInternalFrame {
         });
 
         btnRemove.setText("<<");
+        btnRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveActionPerformed(evt);
+            }
+        });
 
         jScrollPane3.setViewportView(lstAutorO);
 
@@ -427,8 +434,14 @@ public class MaeProducto extends javax.swing.JInternalFrame {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         // TODO add your handling code here:
-        System.out.println(con.getKey(lstAutorO));
+        autores.add(con.getKey(lstAutorO));
+        con.moverList(lstAutorO, lstAutorD);
     }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
+        // TODO add your handling code here:
+        con.returnList(lstAutorD, lstAutorO);
+    }//GEN-LAST:event_btnRemoveActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
