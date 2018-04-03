@@ -143,7 +143,7 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
         titulo = jTextField1.getText();
         autor = jTextField2.getText();
 
-        System.out.println(titulo + "" + autor);
+        //System.out.println(titulo + "" + autor);
 
         if (jTextField1.getText().equals("") && jTextField2.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "Por favor llene al menos uno de los campos de búsqueda", "Error", JOptionPane.ERROR_MESSAGE);
