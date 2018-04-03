@@ -150,7 +150,7 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
                 this.jTable1.setModel(modelo1);
                 con3.setRs("select a.ProNombre, p.autNombre, from producto a inner join productoautor ap "
                         + "on ap.proId = a.proId inner join autor p on p.autId = ap.autId"
-                        + "where a.ProNombre like '%" + titulo + "%' AND p.autNombre like '%" + autor + "%'");
+                        + "where a.proNombre like '%" + titulo + "%' AND p.autNombre like '%" + autor + "%'");
                 generarListado();
             }
             catch(SQLException e){
