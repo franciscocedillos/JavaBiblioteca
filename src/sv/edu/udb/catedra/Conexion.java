@@ -6,7 +6,10 @@
 package sv.edu.udb.catedra;
 import java.sql.*;
 import java.util.*;
+import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -18,6 +21,7 @@ public class Conexion {
     private PreparedStatement st = null;
     private ResultSet rs=null;
     private String query="";
+    private DefaultListModel modelo = new DefaultListModel();
     
     //Contructor
     public Conexion() throws SQLException{
@@ -27,7 +31,7 @@ public class Conexion {
             Class.forName("com.mysql.jdbc.Driver");
             // Se obtiene una conexión con la base de datos. 2
             conexion = DriverManager.getConnection (
-            "jdbc:mysql://localhost/sibylBiblioteca","root", "");
+            "jdbc:mysql://localhost/sibylBiblioteca","root", "admin123*");
             // Permite ejecutar sentencias SQL sin parámetros
             s = conexion.createStatement();
         }
@@ -80,24 +84,53 @@ public class Conexion {
             comboBox.removeAllItems();
             rs = getRs();
             while (rs.next()) {
-                comboBox.addItem(new ItemComboBox(rs.getInt(1), rs.getString(2)));
+                comboBox.addItem(new Item(rs.getInt(1), rs.getString(2)));
             }
         } catch (SQLException ex) {
         }
     }
     
+    public void llenarList(JList list) throws SQLException{
+        try {
+            list.removeAll();
+            list.setModel(modelo);
+            rs = getRs();
+            while (rs.next()) {
+                Item objeto = new Item(rs.getInt(1), rs.getString(2));
+                modelo.addElement(objeto);
+            }
+        } catch (SQLException ex) {
+            
+        }
+    }
+    
+    public int getKey(JList list){
+        /*Object item1 = list.getSelectedValue();
+        int value = ((Item)item1).getId();
+        return value;*/
+        try {
+            Item objeto = (Item)modelo.getElementAt(list.getSelectedIndex());
+            int value = objeto.getId();
+            return value;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            return -1;
+        }
+        
+    }
+    
     public int getValue(JComboBox comboBox){
         Object item = comboBox.getSelectedItem();
-        int value = ((ItemComboBox)item).getId();
+        int value = ((Item)item).getId();
         return value;
     }
     
-    class ItemComboBox
+    class Item
     {
         private final int id;
         private final String descripcion;
  
-        public ItemComboBox(int id, String descripcion)
+        public Item(int id, String descripcion)
         {
             this.id = id;
             this.descripcion = descripcion;
