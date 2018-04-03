@@ -7,6 +7,7 @@ package sv.edu.udb.catedra;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -20,11 +21,11 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
     DefaultTableModel modelo1 = null;
     ResultSet resultado = null;
     Conexion con3 = new Conexion();
-    
+
     /**
      * Creates new form BusquedaLibro
      */
-    public BusquedaLibro() {
+    public BusquedaLibro()  throws SQLException {
         initComponents();
     }
 
@@ -152,10 +153,11 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
                         + "on ap.proId = a.proId inner join autor p on p.autId = ap.autId"
                         + "where a.proNombre like '%" + titulo + "%' AND p.autNombre like '%" + autor + "%'");
                 generarListado();
+            } catch (SQLException e) {
+
             }
-            catch(SQLException e){
-                
-            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Debe ingresar datos en los campos de búsqueda");
         }
     }//GEN-LAST:event_jButton1MouseClicked
 
