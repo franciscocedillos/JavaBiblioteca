@@ -17,7 +17,6 @@ public class Contenedor extends javax.swing.JFrame {
      */
     public Contenedor() {
         initComponents();
-        setExtendedState(Contenedor.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
     }
 
@@ -59,6 +58,7 @@ public class Contenedor extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Sibyl Biblioteca");
+        setResizable(false);
 
         desktopPane.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
