@@ -168,8 +168,8 @@ public class Login extends javax.swing.JFrame {
                 if (verificar.verificarPassword(passArray)) {
                     String pass = new String(passArray);
                     Conexion con = new Conexion();//creamos el objeto para la conexion
-                    con.setRs("select u.tusrId,u.usrId,tu.tusrMaxPrestamo, COUNT(usrId) as cant FROM Usuario u INNER JOIN TipoUsuario tu ON u.tusrId = tu.tusrId\n" +
-                        "where usrCodigo = " + txtNombreUsuario.getText() + "' AND usrPassword = SHA2('" + pass + "',256) GROUP BY u.usrId");//consulta
+                    con.setRs("select u.tusrId,u.usrId,tu.tusrMaxPrestamo, COUNT(usrId) as cant FROM Usuario u INNER JOIN TipoUsuario tu ON u.tusrId = tu.tusrId "
+                            + "where usrCodigo = '"+ txtNombreUsuario.getText().trim() +"' AND usrPassword = SHA2('"+pass+"',256) GROUP BY u.usrId");//consulta
                     ResultSet valor = (ResultSet) con.getRs();//obtenemos los valores
                     if(valor.next()){//nos movemos al unico registro devuelto
                         id_tipo = valor.getString(1);//obtenemos el id del tipo de usuario

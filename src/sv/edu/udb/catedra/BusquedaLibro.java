@@ -28,7 +28,7 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
     private final java.util.Date fechaActual = new java.util.Date();
     SimpleDateFormat formateador = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat stringToDate = new SimpleDateFormat("yyyy-MM-dd");
-    int proId;
+    int proId, max, prestado;
 
     /**
      * Creates new form BusquedaLibro
@@ -201,6 +201,32 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
 
     private void btnPrestarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrestarActionPerformed
         // TODO add your handling code here:
+        try {
+            Conexion con2 = new Conexion();
+            con2.setRs("SELECT tu.tusrMaxPrestamo from TipoUsuario tu\n" +
+                "INNER JOIN Usuario u ON tu.tusrId = u.tusrId\n" +
+                "Where u.usrId="+ContenedorUsuario.usrId);
+            resultado = (ResultSet)con2.getRs();
+            resultado.next();
+            max = resultado.getInt(1);
+            
+            con2.setRs("SELECT COUNT(prstId) as cPrestado from Prestamo Where usrId="+ContenedorUsuario.usrId);
+            resultado = (ResultSet)con2.getRs();
+            resultado.next();
+            prestado = resultado.getInt(1);
+            
+            if (max > prestado) {
+                con2.setQuery("INSERT INTO Prestamo(prstFechaPres,prstFechaPrevDev,prstFechaDev,usrId,proId) "
+                        + "VALUES('"+formateador.format(fechaActual)+"','"+formateador.format(fechaActual) +"',null,"+Contenedor.usrId+","+proId+")" );
+                con2.setQuery("UPDATE Copia SET stpId = 5 WHERE proId = " + proId + " LIMIT 1");
+                JOptionPane.showMessageDialog(null, "Prestamo realizado exitosamente");
+            } else {
+                JOptionPane.showMessageDialog(null, "Lo sentimos. Ha llegado al limite de prestamos.", "Error", JOptionPane.ERROR_MESSAGE, null);
+            }
+            con2.cerrarConexion();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "ERROR: Ocurrió un problema en la BD " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE, null);
+        }
         
     }//GEN-LAST:event_btnPrestarActionPerformed
 
@@ -216,9 +242,7 @@ public class BusquedaLibro extends javax.swing.JInternalFrame {
                 resultado = (ResultSet)con2.getRs();
                 resultado.next();
                 proId = resultado.getInt(1);
-                con2.setRs("SELECT COUNT(prstId) from Prestamo Where usrId="+ContenedorUsuario.usrId);
-                con2.setQuery("INSERT INTO Prestamo(prstFechaPres,prstFechaPrevDev,prstFechaDev,usrId,proId) "
-                        + "VALUES('"+formateador.format(fechaActual)+"','"+formateador.format(fechaActual) +"',null,"+Contenedor.usrId+proId+")" );
+                
             } catch (SQLException e) {
             }
             
